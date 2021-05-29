@@ -6,3 +6,6 @@ retest: testbin
 
 testbin:
 	idris2 --build tests.ipkg
+
+clean:
+	idris2 --clean tests.ipkg

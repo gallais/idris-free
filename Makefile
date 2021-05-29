@@ -9,3 +9,7 @@ test: install
 
 retest:
 	make -C tests retest
+
+clean:
+	idris2 --clean free.ipkg
+	make -C tests clean
