@@ -1,4 +1,7 @@
+**/build
 *.ttc
 *.ttm
 *~
 output
+tests/**/*.ipkg
+tests/failures
