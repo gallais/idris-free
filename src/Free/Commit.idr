@@ -5,6 +5,7 @@ import Data.List1
 import Data.Maybe
 import Data.DPair
 import Free.Common
+import Free.Examples
 
 %default total
 
@@ -159,27 +160,23 @@ homo f t = free t Empty where
     Just (m, mss) => assert_total $ free m (hdls mss stk)
     Nothing => handle stk
 
+export
+run : Free Eff () -> IO ()
+run prog = ignore $ homo eff prog
+
+export
+Effy (Free Eff) where lift = Lift
+
 --------------------------------------------------------------
 -- Example
-
-putStrLn : String -> Free Eff ()
-putStrLn = Lift . PutStrLn
-
-error : String -> Free Eff a
-error err = do
-  putStrLn err
-  fail
-
-guard : Bool -> Free Eff ()
-guard b = if b then Pure () else fail
 
 printInput : Free Eff ()
 printInput = do
   putStrLn "Input"
   n <- Lift Get
-  guard (n /= Z)
+  guard (n /= "")
   Commit -- if we get one valid output, they better all be valid!
-  putStrLn (show n)
+  putStrLn n
 
 prog : Free Eff ()
 prog = sequence_ (replicate 3 printInput)
@@ -209,6 +206,3 @@ outsideMust = (<|> putStrLn "No gonnae do that") $
   do putStrLn "hello"
      Must (fail <|> putStrLn "world")
      Must fail <|> putStrLn "unreachable"
-
-run : Free Eff () -> IO ()
-run prog = ignore $ homo eff prog

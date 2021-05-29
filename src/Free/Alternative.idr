@@ -5,6 +5,7 @@ import Data.List1
 import Data.Maybe
 import Data.DPair
 import Free.Common
+import Free.Examples
 
 %default total
 
@@ -136,25 +137,17 @@ export
 run : Free Eff () -> IO ()
 run prog = ignore $ homo eff prog
 
+export
+Effy (Free Eff) where lift = Lift
+
 --------------------------------------------------------------
 -- Example
-
-putStrLn : String -> Free Eff ()
-putStrLn = Lift . PutStrLn
-
-error : String -> Free Eff a
-error err = do
-  putStrLn err
-  fail
-
-guard : Bool -> Free Eff ()
-guard b = if b then Pure () else fail
 
 printInput : Free Eff ()
 printInput = do
   putStrLn "Input"
   n <- Lift Get
-  guard (n /= Z)
+  guard (n /= "")
   putStrLn (show n)
 
 prog : Free Eff ()

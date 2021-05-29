@@ -2,6 +2,7 @@ module Free.Monad
 
 import Data.List
 import Free.Common
+import Free.Examples
 
 %default total
 
@@ -67,6 +68,9 @@ homo f t = freeK t FNil where
 
   freeK (Pure a)    k = cont a k
   freeK (Bind m fs) k = f m >>= \ x => cont x (fs <>> k)
+
+export
+Effy (Free Eff) where lift m = Bind m BNil
 
 export
 run : Free Eff () -> IO ()

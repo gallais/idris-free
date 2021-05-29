@@ -110,18 +110,3 @@ namespace Bwd
 public export
 Kleisli : Pred Type -> Rel Type
 Kleisli m a b = a -> m b
-
-
---------------------------------------------------------------
--- Some effects for examples
-
-public export
-data Eff : Type -> Type where
-  Get      : Eff Nat
-  PutStrLn : String -> Eff ()
-
-export
-eff : Eff a -> IO a
-eff = \case
-  Get          => length <$> getLine
-  (PutStrLn x) => putStrLn x
