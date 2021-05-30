@@ -14,7 +14,7 @@ monadTests = MkTestPool "Free Monad" []
 
 alternativeTests : TestPool
 alternativeTests = MkTestPool "Free Alternative" []
-  [
+  [ "alternative001"
   ]
 
 commitTests : TestPool

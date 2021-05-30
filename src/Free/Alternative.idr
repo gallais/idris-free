@@ -139,18 +139,3 @@ run prog = ignore $ homo eff prog
 
 export
 Effy (Free Eff) where lift = Lift
-
---------------------------------------------------------------
--- Example
-
-prog : Free Eff ()
-prog = sequence_ (replicate 3 nonEmpty)
-   <|> error "Failed!"
-   <|> putStrLn "Ouch: error in the error handler!"
-   <|> putStrLn "This better not show up!"
-
-nested : Free Eff ()
-nested = do n <- (error "Not here" <|> echo Z <|> echo (S Z))
-            if n /= Z
-              then putStrLn (show n)
-              else error "No backtracking in the first bind"
