@@ -8,12 +8,14 @@ import Data.List
 public export
 data Eff : Type -> Type where
   Get      : Eff String
+  PutStr   : String -> Eff ()
   PutStrLn : String -> Eff ()
 
 export
 eff : Eff a -> IO a
 eff = \case
   Get          => getLine
+  PutStr str   => putStr str
   PutStrLn str => putStrLn str
 
 public export
@@ -27,6 +29,10 @@ get = lift Get
 export
 putStrLn : Effy m => String -> m ()
 putStrLn = lift . PutStrLn
+
+export
+putStr : Effy m => String -> m ()
+putStr = lift . PutStr
 
 --------------------------------------------------------------
 -- With monad constraint
@@ -52,8 +58,8 @@ error err = do
 
 export
 nonEmpty : (Monad m, Alternative m, Effy m) => m ()
-nonEmpty = do
-  putStrLn "Input"
+nonEmpty = (<|> (putStrLn "" *> empty)) $ do
+  putStr "Input: "
   n <- get
   guard (n /= "")
   putStrLn n
