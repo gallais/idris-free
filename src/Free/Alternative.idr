@@ -143,23 +143,11 @@ Effy (Free Eff) where lift = Lift
 --------------------------------------------------------------
 -- Example
 
-printInput : Free Eff ()
-printInput = do
-  putStrLn "Input"
-  n <- Lift Get
-  guard (n /= "")
-  putStrLn (show n)
-
 prog : Free Eff ()
-prog = sequence_ (replicate 3 printInput)
+prog = sequence_ (replicate 3 nonEmpty)
    <|> error "Failed!"
    <|> putStrLn "Ouch: error in the error handler!"
    <|> putStrLn "This better not show up!"
-
-echo : Nat -> Free Eff Nat
-echo n = do
-  putStrLn ("Passing " ++ show n)
-  pure n
 
 nested : Free Eff ()
 nested = do n <- (error "Not here" <|> echo Z <|> echo (S Z))

@@ -1,5 +1,7 @@
+INTERACTIVE ?= --interactive
+
 test: testbin
-	./build/exec/runtests idris2 --interactive --failure-file failures
+	./build/exec/runtests idris2 ${INTERACTIVE} --failure-file failures
 
 retest: testbin
 	./build/exec/runtests idris2 --interactive --failure-file failures --only-file failures

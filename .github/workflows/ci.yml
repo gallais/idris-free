@@ -20,5 +20,5 @@ jobs:
         uses: actions/checkout@v2
       - name: idris build and test
         run: |
-          make clean && make build && make install && make test
+          make clean && make build && make install && make test INTERACTIVE=''
         shell: bash
