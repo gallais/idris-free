@@ -9,10 +9,10 @@ import Free.Examples
 
 %default total
 
-public export
 data Free : Pred Type -> Pred Type
 BCont : Pred Type -> Rel Type
 
+public export
 data Free : Pred Type -> Pred Type where
   Pure   : a -> Free m a
   Lift   : m a -> Free m a
@@ -166,30 +166,3 @@ run prog = ignore $ homo eff prog
 
 export
 Effy (Free Eff) where lift = Lift
-
---------------------------------------------------------------
--- Example
-
-prog : Free Eff ()
-prog = sequence_ (replicate 3 (nonEmpty *> Commit))
-   <|> error "Failed!"
-   <|> putStrLn "Ouch: error in the error handler!"
-   <|> putStrLn "This better not show up!"
-
-nested : Free Eff ()
-nested = do n <- (error "Not here" <|> echo Z <|> echo (S Z))
-            if n /= Z
-              then putStrLn (show n)
-              else error "No backtracking in the first bind"
-
-doubleCommit : Free Eff ()
-doubleCommit
-  = ((putStrLn "hello" *> Commit *> Commit *> fail) <|> putStrLn "bypassed")
-    <|> putStrLn "world" -- success
-    <|> putStrLn "unreachable"
-
-outsideMust : Free Eff ()
-outsideMust = (<|> putStrLn "No gonnae do that") $
-  do putStrLn "hello"
-     Must (fail <|> putStrLn "world")
-     Must fail <|> putStrLn "unreachable"

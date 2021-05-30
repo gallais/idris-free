@@ -1,0 +1,38 @@
+hello
+world
+
+hello
+
+world
+Passing 3
+Passing 2
+Passing 1
+boom
+Input
+hello
+Input
+world
+Input
+!
+Input
+hello
+Input
+Failed!
+Ouch: error in the error handler!
+Not here
+Passing 0
+No backtracking in the first bind
+Input
+hello
+Input
+world
+Input
+!
+Input
+hello
+Input
+Failing...
+Now!
+And recovering!
+This.
+And that.

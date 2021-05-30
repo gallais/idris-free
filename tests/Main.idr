@@ -19,7 +19,7 @@ alternativeTests = MkTestPool "Free Alternative" []
 
 commitTests : TestPool
 commitTests = MkTestPool "Free Alternative with Commit" []
-  [
+  [ "commit001"
   ]
 
 main : IO ()

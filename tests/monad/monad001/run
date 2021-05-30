@@ -1,3 +1,5 @@
 $1 --no-banner --no-color -p free --exec "test1" Monad.idr < input1-1
 $1 --no-banner --no-color -p free --exec "test1" Monad.idr < input1-2
 $1 --no-banner --no-color -p free --exec "test2" Monad.idr
+
+rm -rf build/

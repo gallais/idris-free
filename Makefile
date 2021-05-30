@@ -5,7 +5,7 @@ install:
 	idris2 --install free.ipkg
 
 test: install
-	make -C tests test
+	make -C tests test only=$(only)
 
 retest:
 	make -C tests retest
