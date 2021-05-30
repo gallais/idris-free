@@ -1,0 +1,6 @@
+package free-tests
+
+main = Main
+executable = runtests
+
+depends = contrib, test

@@ -1,0 +1,14 @@
+$1 --no-banner --no-color -p free --exec "test1" Commit.idr < input1-1
+$1 --no-banner --no-color -p free --exec "test1" Commit.idr < input1-2
+$1 --no-banner --no-color -p free --exec "test2" Commit.idr
+$1 --no-banner --no-color -p free --exec "test3" Commit.idr < input3-1
+$1 --no-banner --no-color -p free --exec "test3" Commit.idr < input3-2
+$1 --no-banner --no-color -p free --exec "test3" Commit.idr < input3-3
+$1 --no-banner --no-color -p free --exec "test4" Commit.idr
+$1 --no-banner --no-color -p free --exec "test5" Commit.idr < input3-1
+$1 --no-banner --no-color -p free --exec "test5" Commit.idr < input3-2
+$1 --no-banner --no-color -p free --exec "test5" Commit.idr < input3-3
+$1 --no-banner --no-color -p free --exec "test6" Commit.idr
+$1 --no-banner --no-color -p free --exec "test7" Commit.idr
+
+rm -rf build/
