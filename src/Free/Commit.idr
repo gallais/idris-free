@@ -21,12 +21,12 @@ data Free : Pred Type -> Pred Type where
   Alts   : List (Free m a) -> Free m a
   Bind   : Free m a -> BCont m a b -> Free m b
 
-BCont m = Bwd (Kleisli (Free m))
+BCont m = Bwd1 (Kleisli (Free m))
 
 export
 bind : Free m a -> (a -> Free m b) -> Free m b
 bind (Pure a)   f = f a
-bind (Bind m k) f = Bind m (k :< f)
+bind (Bind m k) f = Bind m (forget k :< f)
 bind (Alts [])  f = Alts []
 bind m          f = Bind m (BNil :< f)
 
@@ -88,10 +88,9 @@ flatten stk = case filterHdls stk of
   fss :< fs => Cont (concat (fss :< fs)) Empty
 
 export
-push : Fwd (Kleisli (Free m)) i j -> Stack m j k -> Stack m i k
-push FNil      stk                  = stk
-push (f :> fs) (Cont (k :> ks) stk) = Cont ((f :> fs) :> (k :> ks)) stk
-push (f :> fs) stk                  = Cont ((f :> fs) :> FNil) stk
+push : Fwd1 (Kleisli (Free m)) i j -> Stack m j k -> Stack m i k
+push fs (Cont ks stk) = Cont (fs :> forget ks) stk
+push fs stk           = Cont (fs :> FNil) stk
 
 export
 cont : Fwd (FCont m) i j -> Stack m j k -> Stack m i k
