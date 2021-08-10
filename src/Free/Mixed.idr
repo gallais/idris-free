@@ -81,7 +81,7 @@ data Free : Pred Type -> Bool -> Pred Type where
   Pure   : a -> Free m False a
   Lift   : m a -> Free m False a
   Fail   : Free m g a
-  Alts   : And1 (flip (Free m) a) h -> Free m g a
+  Alts   : And1 (\ b => Free m b a) h -> Free m g a
   Commit : Free m False ()
   Must   : Free m g a -> Free m g a
   Bind   : Free m g a -> BCont m g a h b -> Free m h b
@@ -224,7 +224,7 @@ namespace List1
 namespace Fwd1
 
   export
-  first : Fwd1 (FCont m) i k -> Exists \ j =>
+  first : Fwd1 (FCont m) i k -> Exists $ \ j =>
           ( EKleisli (Free m) i j, Fwd (FCont m) j k)
   first ((MkFCont (k :> FNil)) :> kss) = Evidence _ (MkEKleisli k, kss)
   first ((MkFCont (k :> (l :> ls))) :> kss)

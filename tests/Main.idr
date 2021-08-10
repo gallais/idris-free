@@ -8,17 +8,17 @@ import Test.Golden
 -- Test cases
 
 monadTests : TestPool
-monadTests = MkTestPool "Free Monad" []
+monadTests = MkTestPool "Free Monad" [] Nothing
   [ "monad001"
   ]
 
 alternativeTests : TestPool
-alternativeTests = MkTestPool "Free Alternative" []
+alternativeTests = MkTestPool "Free Alternative" [] Nothing
   [ "alternative001"
   ]
 
 commitTests : TestPool
-commitTests = MkTestPool "Free Alternative with Commit" []
+commitTests = MkTestPool "Free Alternative with Commit" [] Nothing
   [ "commit001"
   ]
 

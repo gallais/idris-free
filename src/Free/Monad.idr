@@ -16,7 +16,7 @@ data Free : Pred Type -> Pred Type where
   Bind : m a -> BCont m a b -> Free m b
 
 FCont m = Fwd (Kleisli (Free m))
-BCont m = Bwd (Kleisli (Free m))
+BCont m = Bwd (\a, b => a -> Free m b)
 
 export
 lift : m a -> Free m a

@@ -1,3 +1,5 @@
+.PHONY: build install test retest clean
+
 build:
 	idris2 --build free.ipkg
 

@@ -26,7 +26,7 @@ modules
 
 -- name of executable
 -- executable =
--- opts =
+opts = "-Werror"
 sourcedir = "src"
 -- builddir =
 -- outputdir =
