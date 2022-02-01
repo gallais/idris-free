@@ -15,6 +15,7 @@ authors = "gallais <guillaume.allais@ens-lyon.org>"
 -- modules to install
 modules
   = Free.Alternative
+  , Free.Alternative2
   , Free.Commit
   , Free.Common
   , Free.Examples

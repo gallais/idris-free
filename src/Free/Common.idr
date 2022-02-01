@@ -42,6 +42,13 @@ namespace Fwd1
   (++) : Fwd1 m i j -> Fwd1 m j k -> Fwd1 m i k
   (x :> xs) ++ ys = x :> (xs ++ forget ys)
 
+namespace FwdFwd1
+
+  export
+  (++) : Fwd m i j -> Fwd1 m j k -> Fwd1 m i k
+  FNil ++ ys = ys
+  (x :> xs) ++ ys = x :> (xs ++ forget ys)
+
 infixl 5 :<
 public export
 data Bwd : Rel a -> Rel a where
