@@ -55,9 +55,7 @@ fold alg t = freeK t FNil where
   freeK (Bind m fs) k = cont (alg m) (fs <>> k)
 
 export
-homo : Monad n =>
-       (f : {0 a : Type} -> m a -> n a) ->
-       (Free m a -> n a)
+homo : Monad n => (m ~> n) -> (Free m ~> n)
 homo f t = freeK t FNil where
 
   cont  : i -> FCont m i j -> n j

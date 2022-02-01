@@ -61,32 +61,43 @@ Alternative (Free m) where
   m <|> n = union m n
 
 export
+FCont1 : Pred Type -> Rel Type
+FCont1 m = Fwd1 (Kleisli (Free m))
+
+export
 FCont : Pred Type -> Rel Type
-FCont m = Fwd1 (Kleisli (Free m))
+FCont m = Fwd (Kleisli (Free m))
 
 export
 data Stack : Pred Type -> Rel Type where
+  ||| Empty stack: return the result of the i-computation
   Empty : Stack m i i
+  ||| Handlers in case the current i-computation fails
   Hdls  : List1 (List1 (Free m i)) -> Stack m i j -> Stack m i j
-  Cont  : Fwd1 (FCont m) i j -> Stack m j k -> Stack m i k
+  ||| Continuations turning the i-computation into a j-computation
+  Cont  : Fwd1 (FCont1 m) i j -> Stack m j k -> Stack m i k
 
+||| Push some continuations on the stack, merge with any existing Cont layer
 export
-push : Fwd (Kleisli (Free m)) i j -> Stack m j k -> Stack m i k
-push FNil      stk                  = stk
-push (f :> fs) (Cont (k :> ks) stk) = Cont ((f :> fs) :> (k :> ks)) stk
-push (f :> fs) stk                  = Cont ((f :> fs) :> FNil) stk
+push : FCont m i j -> Stack m j k -> Stack m i k
+push FNil      stk            = stk
+push (f :> fs) (Cont kks stk) = Cont ((f :> fs) :> forget kks) stk
+push (f :> fs) stk            = Cont ((f :> fs) :> FNil) stk
 
+||| Smart constructor for Cont; makes sure the list is non-empty
 export
-cont : Fwd (FCont m) i j -> Stack m j k -> Stack m i k
+cont : Fwd (FCont1 m) i j -> Stack m j k -> Stack m i k
 cont FNil stk = stk
 cont (fs :> fss) stk = Cont (fs :> fss) stk
 
+||| Install handlers on the stack, merge with any existing Hdls layer
 export
 install : List (Free m i) -> Stack m i j -> Stack m i j
 install []        stk           = stk
 install (m :: ms) (Hdls ns stk) = Hdls ((m ::: ms) ::: forget ns) stk
 install (m :: ms) stk           = Hdls ((m ::: ms) ::: []) stk
 
+||| Smart constructor for Hdls; makes sure the list is non-empty
 export
 hdls : List (List1 (Free m i)) -> Stack m i j -> Stack m i j
 hdls [] stk = stk
@@ -102,19 +113,22 @@ namespace List1
 namespace Fwd1
 
   export
-  first : Fwd1 (Fwd1 r) i k -> Exists \ j =>
+  first : Fwd1 (Fwd1 r) i k -> Exists $ \ j =>
           (r i j, Fwd (Fwd1 r) j k)
   first ((k :> FNil) :> kss) = Evidence _ (k, kss)
   first ((k :> (l :> ls)) :> kss) = Evidence _ (k, (l :> ls) :> kss)
 
 export
 homo : Monad n =>
-       ({0 a : Type} ->      m a -> n        a) ->
-       ({0 a : Type} -> Free m a -> n (Maybe a))
+       (     m ~> n) ->
+       (Free m ~> n . Maybe)
 homo f t = free t Empty where
 
+  ||| Entrypoint: evaluating an i-computation against an (i,j)-stack
   free     : Free m i -> Stack m i j -> n (Maybe j)
+  ||| Continuation: confronting an i-value to an (i,j)-stack
   continue : i        -> Stack m i j -> n (Maybe j)
+  ||| Handling: recovering from an i-failure in an (i,j)-stack
   handle   :             Stack m i j -> n (Maybe j)
 
   free (Pure a)         stk = continue a stk
@@ -134,8 +148,10 @@ homo f t = free t Empty where
     (m, mss) => assert_total $ free m (hdls mss stk)
 
 export
-run : Free Eff () -> IO ()
-run prog = ignore $ homo eff prog
+run : Show a => Free Eff a -> IO ()
+run prog = do
+  res <- homo eff prog
+  putStrLn $ "Result: \{show res}"
 
 export
 Effy (Free Eff) where lift = Lift

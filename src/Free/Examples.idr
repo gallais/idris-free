@@ -47,6 +47,14 @@ echo n = do
   putStrLn ("Passing " ++ show n)
   pure n
 
+export
+countdown : (Monad m, Effy m) => m ()
+countdown = do
+  ignore $ echo 3
+  ignore $ echo 2
+  ignore $ echo 1
+  putStrLn "boom"
+
 --------------------------------------------------------------
 -- With monad & alternative constraints
 
@@ -63,3 +71,18 @@ nonEmpty = (<|> (putStrLn "" *> empty)) $ do
   n <- get
   guard (n /= "")
   putStrLn n
+
+export
+getNonEmpty : (Monad m, Alternative m, Effy m) => m ()
+getNonEmpty = sequence_ (replicate 3 nonEmpty)
+   <|> error "Failed!"
+   <|> putStrLn "Ouch: error in the error handler!"
+   <|> putStrLn "This better not show up!"
+
+export
+noBacktracking : (Monad m, Alternative m, Effy m) => m ()
+noBacktracking =
+  do n <- (error "Not here" <|> echo Z <|> echo (S Z))
+     if n /= Z
+       then putStrLn "Ouch: backtracked and got: \{show n}"
+       else error "No backtracking in the bind"

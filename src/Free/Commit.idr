@@ -125,7 +125,7 @@ namespace List1
 namespace Fwd1
 
   export
-  first : Fwd1 (Fwd1 r) i k -> Exists \ j =>
+  first : Fwd1 (Fwd1 r) i k -> Exists $ \ j =>
           (r i j, Fwd (Fwd1 r) j k)
   first ((k :> FNil) :> kss) = Evidence _ (k, kss)
   first ((k :> (l :> ls)) :> kss) = Evidence _ (k, (l :> ls) :> kss)

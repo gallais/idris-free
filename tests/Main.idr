@@ -7,27 +7,17 @@ import Test.Golden
 ------------------------------------------------------------------------
 -- Test cases
 
-monadTests : TestPool
-monadTests = MkTestPool "Free Monad" []
+freeTests : TestPool
+freeTests = MkTestPool "Free constructions" [] Nothing
   [ "monad001"
-  ]
-
-alternativeTests : TestPool
-alternativeTests = MkTestPool "Free Alternative" []
-  [ "alternative001"
-  ]
-
-commitTests : TestPool
-commitTests = MkTestPool "Free Alternative with Commit" []
-  [ "commit001"
+  , "alternative001"
+  , "commit001"
   ]
 
 main : IO ()
 main = runner
-  [ testPaths "monad" monadTests
-  , testPaths "alternative" alternativeTests
-  , testPaths "commit" commitTests
+  [ testPaths "free" freeTests
   ] where
 
     testPaths : String -> TestPool -> TestPool
-    testPaths dir = record { testCases $= map ((dir ++ "/") ++) }
+    testPaths dir = { testCases $= map ((dir ++ "/") ++) }
