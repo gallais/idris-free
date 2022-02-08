@@ -1,9 +1,10 @@
-module Free.Alternative
+module Free.Alternative2
 
 import Data.List
 import Data.List1
 import Data.Maybe
 import Data.DPair
+import Data.SnocList
 import Free.Common
 import Free.Examples
 
@@ -19,7 +20,7 @@ data Free : Pred Type -> Pred Type where
   Alts : List (Free m a) -> Free m a
   Bind : Free m a -> BCont m a b -> Free m b
 
-BCont m = Bwd (\a, b => a -> Free m b)
+BCont m = Bwd (Kleisli (Free m))
 
 export
 bind : Free m a -> (a -> Free m b) -> Free m b
@@ -73,50 +74,33 @@ data Stack : Pred Type -> Rel Type where
   ||| Empty stack: return the result of the i-computation
   Empty : Stack m i i
   ||| Handlers in case the current i-computation fails
-  Hdls  : List1 (List1 (Free m i)) -> Stack m i j -> Stack m i j
+  Hdls  : List1 (Free m i) -> Stack m i j -> Stack m i j
   ||| Continuations turning the i-computation into a j-computation
-  Cont  : Fwd1 (FCont1 m) i j -> Stack m j k -> Stack m i k
+  Cont  : FCont1 m i j -> Stack m j k -> Stack m i k
 
 ||| Push some continuations on the stack, merge with any existing Cont layer
 export
 push : FCont m i j -> Stack m j k -> Stack m i k
 push FNil      stk            = stk
-push (f :> fs) (Cont kks stk) = Cont ((f :> fs) :> forget kks) stk
-push (f :> fs) stk            = Cont ((f :> fs) :> FNil) stk
+push fs        (Cont kks stk) = Cont (fs ++ kks) stk
+push (f :> fs) stk            = Cont (f :> fs) stk
 
-||| Smart constructor for Cont; makes sure the list is non-empty
-export
-cont : Fwd (FCont1 m) i j -> Stack m j k -> Stack m i k
+||| Smart constructor for Cont, checking the list is non-empty
+cont : FCont m i j -> Stack m j k -> Stack m i k
 cont FNil stk = stk
-cont (fs :> fss) stk = Cont (fs :> fss) stk
+cont (k :> ks) stk = Cont (k :> ks) stk
 
 ||| Install handlers on the stack, merge with any existing Hdls layer
 export
 install : List (Free m i) -> Stack m i j -> Stack m i j
 install []        stk           = stk
-install (m :: ms) (Hdls ns stk) = Hdls ((m ::: ms) ::: forget ns) stk
-install (m :: ms) stk           = Hdls ((m ::: ms) ::: []) stk
+install ms        (Hdls ns stk) = Hdls (lappend ms ns) stk
+install (m :: ms) stk           = Hdls (m ::: ms) stk
 
-||| Smart constructor for Hdls; makes sure the list is non-empty
-export
-hdls : List (List1 (Free m i)) -> Stack m i j -> Stack m i j
+||| Smart constructor for Hdls, making sure the list is non-empty
+hdls : List (Free m i) -> Stack m i j -> Stack m i j
 hdls [] stk = stk
-hdls (ms :: mss) stk = Hdls (ms ::: mss) stk
-
-namespace List1
-
-  export
-  first : List1 (List1 a) -> (a, List (List1 a))
-  first ((m ::: []) ::: mss) = (m, mss)
-  first ((m ::: (n :: ns)) ::: mss) = (m, (n ::: ns) :: mss)
-
-namespace Fwd1
-
-  export
-  first : Fwd1 (Fwd1 r) i k -> Exists $ \ j =>
-          (r i j, Fwd (Fwd1 r) j k)
-  first ((k :> FNil) :> kss) = Evidence _ (k, kss)
-  first ((k :> (l :> ls)) :> kss) = Evidence _ (k, (l :> ls) :> kss)
+hdls (m :: ms) stk = Hdls (m ::: ms) stk
 
 export
 homo : Monad n =>
@@ -139,13 +123,11 @@ homo f t = free t Empty where
 
   continue a Empty          = pure (Just a)
   continue a (Hdls _   stk) = continue a stk
-  continue a (Cont kss stk) = case first kss of
-    (Evidence _ (k, kss)) => assert_total $ free (k a) (cont kss stk)
+  continue a (Cont (k :> ks) stk) = assert_total $ free (k a) (cont ks stk)
 
   handle Empty          = pure Nothing
   handle (Cont _   stk) = handle stk
-  handle (Hdls mss stk) = case first mss of
-    (m, mss) => assert_total $ free m (hdls mss stk)
+  handle (Hdls (m ::: mss) stk) = assert_total $ free m (hdls mss stk)
 
 export
 run : Show a => Free Eff a -> IO ()

@@ -1,6 +1,6 @@
-package free
+package monad
 -- version =
-authors = "gallais <guillaume.allais@ens-lyon.org>"
+-- authors =
 -- maintainers =
 -- license =
 -- brief =
@@ -9,26 +9,22 @@ authors = "gallais <guillaume.allais@ens-lyon.org>"
 -- sourceloc =
 -- bugtracker =
 
+-- the Idris2 version required (e.g. langversion >= 0.5.1)
+-- langversion
+
 -- packages to add to search path
--- depends =
+depends = free
 
 -- modules to install
-modules
-  = Free.Alternative
-  , Free.Alternative2
-  , Free.Commit
-  , Free.Common
-  , Free.Examples
-  , Free.Monad
-  , Free.Mixed
+modules = Monad
 
 -- main file (i.e. file to load at REPL)
 -- main =
 
 -- name of executable
 -- executable =
-opts = "-Werror"
-sourcedir = "src"
+-- opts =
+-- sourcedir =
 -- builddir =
 -- outputdir =
 

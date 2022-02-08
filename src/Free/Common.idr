@@ -6,6 +6,11 @@ public export
 Pred : Type -> Type
 Pred a = a -> Type
 
+infix 0 ~>
+public export
+0 (~>) : Pred a -> Pred a -> Type
+p ~> q = {0 x : a} -> p x -> q x
+
 public export
 Rel : Type -> Type
 Rel a = a -> a -> Type
@@ -37,11 +42,18 @@ namespace Fwd1
   (++) : Fwd1 m i j -> Fwd1 m j k -> Fwd1 m i k
   (x :> xs) ++ ys = x :> (xs ++ forget ys)
 
+namespace FwdFwd1
+
+  export
+  (++) : Fwd m i j -> Fwd1 m j k -> Fwd1 m i k
+  FNil ++ ys = ys
+  (x :> xs) ++ ys = x :> (xs ++ forget ys)
+
 infixl 5 :<
 public export
 data Bwd : Rel a -> Rel a where
   BNil : Bwd r i i
-  (:<) : {0 r : Rel a} -> Bwd r i j -> r j k -> Bwd r i k
+  (:<) : Bwd r i j -> r j k -> Bwd r i k
 
 infixl 3 <><
 export
@@ -61,7 +73,7 @@ namespace Bwd1
 
   public export
   data Bwd1 : Rel a -> Rel a where
-    (:<) : {0 r : Rel a} -> Bwd r i j -> r j k -> Bwd1 r i k
+    (:<) : Bwd r i j -> r j k -> Bwd1 r i k
 
   export
   forget : Bwd1 m i j -> Bwd m i j
@@ -107,6 +119,8 @@ namespace Bwd
   reverse : Bwd r i j -> Fwd r i j
   reverse = (<>> FNil)
 
+-- Note that we need (Kleisli m) to reduce for positivity checking purposes
+-- cf. https://github.com/idris-lang/Idris2/issues/2297
 public export
 Kleisli : Pred Type -> Rel Type
-Kleisli m a b = a -> m b
+Kleisli m = \ a, b => a -> m b
