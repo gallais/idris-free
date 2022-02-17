@@ -1,7 +1,7 @@
 import Free.Common
 import Free.Examples
 
-import Free.Alternative
+import Free.Commit
 
 test : IO ()
 test = do

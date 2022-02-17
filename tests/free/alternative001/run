@@ -1,9 +1,11 @@
 rm -rf build/
 
-$1 --no-banner --no-color -p free --exec "test1" Alternative.idr < input1-1
-$1 --no-banner --no-color -p free --exec "test1" Alternative.idr < input1-2
-$1 --no-banner --no-color -p free --exec "test2" Alternative.idr
-$1 --no-banner --no-color -p free --exec "test3" Alternative.idr < input3-1
-$1 --no-banner --no-color -p free --exec "test3" Alternative.idr < input3-2
-$1 --no-banner --no-color -p free --exec "test3" Alternative.idr < input3-3
-$1 --no-banner --no-color -p free --exec "test4" Alternative.idr
+$1 --no-banner --no-color -p free --exec "test" Alternative.idr  < input > output-alternative
+$1 --no-banner --no-color -p free --exec "test" Alternative2.idr < input > output-alternative2
+$1 --no-banner --no-color -p free --exec "test" Commit.idr       < input > output-commit
+$1 --no-banner --no-color -p free --exec "test" Mixed.idr        < input > output-mixed
+
+diff output-alternative  expected-for-each
+diff output-alternative2 expected-for-each
+diff output-commit       expected-for-each
+diff output-mixed        expected-for-each

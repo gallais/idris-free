@@ -11,7 +11,6 @@ freeTests : TestPool
 freeTests = MkTestPool "Free constructions" [] Nothing
   [ "monad001"
   , "alternative001"
-  , "alternative002"
   , "commit001"
   ]
 

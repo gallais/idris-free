@@ -20,13 +20,14 @@ modules
   , Free.Common
   , Free.Examples
   , Free.Monad
+  , Free.Mixed
 
 -- main file (i.e. file to load at REPL)
 -- main =
 
 -- name of executable
 -- executable =
--- opts =
+opts = "-Werror"
 sourcedir = "src"
 -- builddir =
 -- outputdir =

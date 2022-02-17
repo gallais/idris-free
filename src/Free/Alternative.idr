@@ -19,7 +19,7 @@ data Free : Pred Type -> Pred Type where
   Alts : List (Free m a) -> Free m a
   Bind : Free m a -> BCont m a b -> Free m b
 
-BCont m = Bwd (Kleisli (Free m))
+BCont m = Bwd (\a, b => a -> Free m b)
 
 export
 bind : Free m a -> (a -> Free m b) -> Free m b

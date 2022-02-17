@@ -160,8 +160,15 @@ homo f t = free t Empty where
     Nothing => handle stk
 
 export
-run : Free Eff () -> IO ()
-run prog = ignore $ homo eff prog
+run : Show a => Free Eff a -> IO ()
+run prog = do
+  res <- homo eff prog
+  putStrLn $ "Result: \{show res}"
 
 export
 Effy (Free Eff) where lift = Lift
+
+export
+Committy (Free Eff) where
+  must = Must
+  commit = Commit

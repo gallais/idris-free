@@ -1,13 +1,12 @@
-module Monad
-
 import Free.Common
-import Free.Monad
 import Free.Examples
 
-import Data.List
+import Free.Monad
 
-test1 : IO ()
-test1 = run cat3
-
-test2 : IO ()
-test2 = run countdown
+test : IO ()
+test = do
+  -- the other tests are returning a `Maybe`-value
+  -- so for uniformity we adjust the output here
+  run $ Just <$> cat3
+  run $ Just <$> cat3
+  run $ Just <$> countdown

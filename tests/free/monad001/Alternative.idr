@@ -5,7 +5,6 @@ import Free.Alternative
 
 test : IO ()
 test = do
-  run getNonEmpty
-  run getNonEmpty
-  run getNonEmpty
-  run noBacktracking
+  run cat3
+  run cat3
+  run countdown

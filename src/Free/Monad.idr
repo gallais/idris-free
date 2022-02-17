@@ -16,7 +16,7 @@ data Free : Pred Type -> Pred Type where
   Bind : m a -> BCont m a b -> Free m b
 
 FCont m = Fwd (Kleisli (Free m))
-BCont m = Bwd (Kleisli (Free m))
+BCont m = Bwd (\a, b => a -> Free m b)
 
 export
 lift : m a -> Free m a
@@ -71,5 +71,7 @@ export
 Effy (Free Eff) where lift m = Bind m BNil
 
 export
-run : Free Eff () -> IO ()
-run = homo eff
+run : Show a => Free Eff a -> IO ()
+run prog = do
+  res <- homo eff prog
+  putStrLn $ "Result: \{show res}"

@@ -3,5 +3,6 @@
 *.ttm
 *~
 output
+output-*
 tests/**/*.ipkg
 tests/failures

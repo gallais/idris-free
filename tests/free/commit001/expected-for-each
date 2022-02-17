@@ -1,0 +1,18 @@
+Input: hello
+Input: world
+Input: !
+Result: Just ()
+Input: hello
+Input: 
+Result: Nothing
+Input: 
+Failed!
+Ouch: error in the error handler!
+Result: Just ()
+Failing...
+Now!
+And recovering!
+Result: Just ()
+This.
+And that.
+Result: Nothing
