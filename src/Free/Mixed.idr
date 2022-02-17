@@ -316,8 +316,10 @@ homo f t = free t Empty where
     Nothing => handle stk
 
 export
-run : Free (const Eff) g () -> IO ()
-run prog = ignore $ homo eff prog
+run : Show a => Free (const Eff) g a -> IO ()
+run prog = do
+  res <- homo eff prog
+  putStrLn $ "Result: \{show res}"
 
 export
 Effy (Free (const Eff) False) where lift = Lift

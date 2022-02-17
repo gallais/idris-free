@@ -71,5 +71,7 @@ export
 Effy (Free Eff) where lift m = Bind m BNil
 
 export
-run : Free Eff () -> IO ()
-run = homo eff
+run : Show a => Free Eff a -> IO ()
+run prog = do
+  res <- homo eff prog
+  putStrLn $ "Result: \{show res}"
