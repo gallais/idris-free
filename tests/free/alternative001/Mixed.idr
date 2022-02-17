@@ -5,6 +5,7 @@ import Free.Mixed
 
 test : IO ()
 test = do
-  run cat3
-  run cat3
-  run countdown
+  run getNonEmpty
+  run getNonEmpty
+  run getNonEmpty
+  run noBacktracking

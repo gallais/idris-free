@@ -316,7 +316,7 @@ homo f t = free t Empty where
     Nothing => handle stk
 
 export
-run : Show a => Free (const Eff) g a -> IO ()
+run : {default False 0 g : Bool} -> Show a => Free (const Eff) g a -> IO ()
 run prog = do
   res <- homo eff prog
   putStrLn $ "Result: \{show res}"
