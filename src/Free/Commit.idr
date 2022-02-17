@@ -167,3 +167,8 @@ run prog = do
 
 export
 Effy (Free Eff) where lift = Lift
+
+export
+Committy (Free Eff) where
+  must = Must
+  commit = Commit

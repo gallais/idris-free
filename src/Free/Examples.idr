@@ -2,6 +2,7 @@ module Free.Examples
 
 import Data.List
 
+
 --------------------------------------------------------------
 -- Some effects for examples
 
@@ -18,9 +19,16 @@ eff = \case
   PutStr str   => putStr str
   PutStrLn str => putStrLn str
 
+%hide Prelude.putStrLn
+
 public export
 interface Effy m where
   lift : Eff a -> m a
+
+public export
+interface Committy (0 m : Type -> Type) where
+  commit : m ()
+  must : m a -> m a
 
 export
 get : Effy m => m String
@@ -86,3 +94,29 @@ noBacktracking =
      if n /= Z
        then putStrLn "Ouch: backtracked and got: \{show n}"
        else error "No backtracking in the bind"
+
+
+--------------------------------------------------------------
+-- With monad, alternative, & commit constraints
+
+export
+getNonEmptyCommit : (Monad m, Alternative m, Committy m, Effy m) => m ()
+getNonEmptyCommit = sequence_ (replicate 3 (nonEmpty *> commit))
+   <|> error "Failed!"
+   <|> putStrLn "Ouch: error in the error handler!"
+   <|> putStrLn "This better not show up!"
+
+export
+doubleCommit : (Monad m, Alternative m, Committy m, Effy m) => m ()
+doubleCommit =
+    ((putStrLn "Failing..." *> commit *> commit *> error "Now!")
+      <|> putStrLn "bypassed")
+    <|> putStrLn "And recovering!"
+    <|> putStrLn "unreachable"
+
+export
+mustFail : (Monad m, Alternative m, Committy m, Effy m) => m ()
+mustFail = (<|> putStrLn "No gonnae do that") $
+  do putStrLn "This."
+     must (empty <|> putStrLn "And that.")
+     must empty <|> putStrLn "unreachable"

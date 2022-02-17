@@ -324,6 +324,11 @@ run prog = do
 export
 Effy (Free (const Eff) False) where lift = Lift
 
+export
+Committy (Free (const Eff) False) where
+  must = Must
+  commit = Commit
+
 ------------------------------------------------------------------------------
 -- Declaring these purely for testing purposes
 
