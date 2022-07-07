@@ -322,12 +322,16 @@ run prog = do
   putStrLn $ "Result: \{show res}"
 
 export
-Effy (Free (const Eff) False) where lift = Lift
+lift : m g a -> Free m g a
+lift = Lift
 
 export
-Committy (Free (const Eff) False) where
-  must = Must
-  commit = Commit
+must : Free m g a -> Free m g a
+must = Must
+
+export
+commit : Free m False ()
+commit = Commit
 
 ------------------------------------------------------------------------------
 -- Declaring these purely for testing purposes
@@ -335,7 +339,7 @@ Committy (Free (const Eff) False) where
 export
 Applicative (Free m False) where
   pure = Pure
-  fs <*> xs = bind fs $ \ f => map (f $) xs
+  mf <*> ma = bind mf $ \ f => bind ma $ \ a => Pure (f a)
 
 export
 Monad (Free m False) where
@@ -345,3 +349,39 @@ export
 Alternative (Free m False) where
   empty = fail
   m <|> n = union m n
+
+export
+Effy (Free (const Eff) False) where
+  lift = Lift
+
+export
+Committy (Free m False) where
+  commit = Commit
+  must = Must
+
+-- More polymorphic versions
+
+export
+pure : a -> Free m False a
+pure = Pure
+
+export
+(>>=) : {g : _} -> Free m g a -> inf g (a -> Free m h b) -> Free m (g || h) b
+(>>=) = bind
+
+export
+(>>) : {g : _} -> Free m g () -> inf g (Free m h a) -> Free m (g || h) a
+(>>) {g = True} ma mb = bind ma (const mb)
+(>>) {g = False} ma mb = bind ma (const mb)
+
+export
+empty : Free m g a
+empty = fail
+
+export
+(<|>) : Free m g a -> Free m h a -> Free m (g && h) a
+m <|> n = union m n
+
+export
+forget : Free m True a -> Free m False a
+forget = (<|> fail)

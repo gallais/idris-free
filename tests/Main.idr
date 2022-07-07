@@ -12,6 +12,7 @@ freeTests = MkTestPool "Free constructions" [] Nothing
   [ "alternative001"
   , "monad001"
   , "commit001"
+  , "mixed001"
   ]
 
 main : IO ()

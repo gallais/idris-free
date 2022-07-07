@@ -1,0 +1,11 @@
+Oops, "hello" is not empty
+Oops, "world" is not empty
+Oops, "!" is not empty
+Oops, "hello" is not empty
+Found an empty line
+Result: Just ()
+Oops, found an empty line
+Oops, found an empty line
+Oops, found an empty line
+Found a non-empty line: "hello"
+Result: Just ()
