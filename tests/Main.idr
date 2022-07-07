@@ -9,8 +9,8 @@ import Test.Golden
 
 freeTests : TestPool
 freeTests = MkTestPool "Free constructions" [] Nothing
-  [ "monad001"
-  , "alternative001"
+  [ "alternative001"
+  , "monad001"
   , "commit001"
   ]
 
